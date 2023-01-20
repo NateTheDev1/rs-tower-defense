@@ -1,5 +1,3 @@
-pub mod systems;
-
 mod bullet;
 mod target;
 mod tower;
@@ -11,8 +9,8 @@ pub use tower::*;
 use bevy::{
     prelude::{
         default, shape, App, AssetServer, Assets, Camera3dBundle, ClearColor, Color, Commands,
-        Handle, Mesh, Name, PbrBundle, PluginGroup, Res, ResMut, Resource, StandardMaterial,
-        Transform, Vec3,
+        Handle, Mesh, Name, PbrBundle, PluginGroup, PointLight, PointLightBundle, Res, ResMut,
+        Resource, StandardMaterial, Transform, Vec3,
     },
     scene::Scene,
     time::Timer,
@@ -21,6 +19,20 @@ use bevy::{
 };
 
 use bevy_inspector_egui::quick::WorldInspectorPlugin;
+
+pub fn spawn_lighting(mut commands: Commands) {
+    commands
+        .spawn(PointLightBundle {
+            point_light: PointLight {
+                intensity: 1500.0,
+                shadows_enabled: true,
+                ..default()
+            },
+            transform: Transform::from_xyz(4.0, 8.0, 4.0),
+            ..default()
+        })
+        .insert(Name::new("Light"));
+}
 
 pub fn spawn_basic_scene(
     mut commands: Commands,
@@ -111,6 +123,7 @@ fn main() {
         .add_plugin(TargetPlugin)
         .add_plugin(BulletPlugin)
         .add_startup_system(spawn_basic_scene)
+        .add_startup_system(spawn_lighting)
         .add_startup_system(spawn_camera)
         .add_startup_system(asset_loading)
         .run();
