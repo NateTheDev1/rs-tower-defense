@@ -13,3 +13,4 @@ opt-level = 3
 [dependencies]
 bevy = {version = "0.9.1", features = ["dynamic"] }
 bevy-inspector-egui = "0.17.0"
+bevy_mod_picking = "0.11.0"
