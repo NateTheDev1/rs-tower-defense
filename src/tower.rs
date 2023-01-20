@@ -29,7 +29,7 @@ fn tower_shooting(
     mut commands: Commands,
     mut towers: Query<(Entity, &mut Tower, &GlobalTransform)>,
     targets: Query<&GlobalTransform, With<Target>>,
-    bullet_assets: Res<GameAssets>,
+    game_assets: Res<GameAssets>,
     time: Res<Time>,
 ) {
     for (tower_ent, mut tower, transform) in &mut towers {
@@ -48,7 +48,7 @@ fn tower_shooting(
                 commands.entity(tower_ent).with_children(|commands| {
                     commands
                         .spawn(SceneBundle {
-                            scene: bullet_assets.bullet_scene.clone(),
+                            scene: game_assets.tomato_scene.clone(),
                             transform: Transform::from_translation(tower.bullet_offset),
                             ..Default::default()
                         })
