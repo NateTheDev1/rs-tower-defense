@@ -1,14 +1,31 @@
-use bevy::{prelude::*, utils::FloatOrd};
-
-use crate::components::{
-    bullet::Bullet,
-    target::Target,
-    tower::{Lifetime, Tower},
+use bevy::{
+    prelude::{
+        App, BuildChildren, Commands, Component, Entity, GlobalTransform, Name, Plugin, Query, Res,
+        Transform, Vec3, With,
+    },
+    reflect::Reflect,
+    scene::SceneBundle,
+    time::{Time, Timer, TimerMode},
+    utils::FloatOrd,
 };
 
-use super::asset_loading::GameAssets;
+use crate::{Bullet, GameAssets, Lifetime, Target};
 
-pub fn tower_shooting(
+#[derive(Component, Reflect, Default)]
+pub struct Tower {
+    pub shooting_timer: Timer,
+    pub bullet_offset: Vec3,
+}
+
+pub struct TowerPlugin;
+
+impl Plugin for TowerPlugin {
+    fn build(&self, app: &mut App) {
+        app.register_type::<Tower>().add_system(tower_shooting);
+    }
+}
+
+fn tower_shooting(
     mut commands: Commands,
     mut towers: Query<(Entity, &mut Tower, &GlobalTransform)>,
     targets: Query<&GlobalTransform, With<Target>>,
@@ -45,20 +62,6 @@ pub fn tower_shooting(
                         .insert(Name::new("Bullet"));
                 });
             }
-        }
-    }
-}
-
-pub fn bullet_despawn(
-    mut commands: Commands,
-    mut bullets: Query<(Entity, &mut Lifetime)>,
-    time: Res<Time>,
-) {
-    for (entity, mut lifetime) in &mut bullets {
-        lifetime.timer.tick(time.delta());
-
-        if lifetime.timer.just_finished() {
-            commands.entity(entity).despawn_recursive();
         }
     }
 }
